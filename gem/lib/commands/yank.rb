@@ -1,5 +1,5 @@
-class Gem::Commands::YankCommand < Gem::AbstractCommand
 
+class Gem::Commands::YankCommand < Gem::AbstractCommand
   def description
     'Remove a specific gem version release from Gemcutter'
   end
@@ -14,13 +14,12 @@ class Gem::Commands::YankCommand < Gem::AbstractCommand
 
   def initialize
     super 'yank', description
-    add_option('-v', '--version VERSION', 'Version to remove') do |value, options|
-      options[:version] << value
-    end
+    add_version_option
   end
 
   def execute
     setup
+    # raise options.inspect
     yank_gem(options[:version])
   end
 
@@ -28,10 +27,14 @@ class Gem::Commands::YankCommand < Gem::AbstractCommand
     say "Yanking gem from Gemcutter..."
 
     name = get_one_gem_name
-    response = make_request(:post, "gems/yank/#{name}?version=#{version}") do |request|
-      request.add_field("Authorization", api_key)
-    end
+    url = "gems/yank/#{name}"
+    # say "posting to #{url}"
 
+    response = make_request(:post, url) do |request|
+      request.add_field("Authorization", api_key)
+      request.add_field('version', version)
+    end
+    
     say response.body
   end
 

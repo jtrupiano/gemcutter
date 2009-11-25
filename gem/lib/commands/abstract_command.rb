@@ -1,7 +1,9 @@
+require 'rubygems/version_option'
 require 'rubygems/local_remote_options'
 
 class Gem::AbstractCommand < Gem::Command
   include Gem::LocalRemoteOptions
+  include Gem::VersionOption
 
   URL = "http://gemcutter.org"
 
