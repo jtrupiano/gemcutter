@@ -28,6 +28,7 @@ class Version < ActiveRecord::Base
   before_save :update_prerelease
   after_save  :reorder_versions
   after_save  :full_nameify!
+  after_destroy :unlink_gemfile
 
   def validate
     if new_record? && Version.exists?(:rubygem_id => rubygem_id, :number => number, :platform => platform)
@@ -160,5 +161,11 @@ class Version < ActiveRecord::Base
         spec.add_dependency(dep.rubygem.name, dep.requirements.split(', '))
       end
     end
+  end
+
+  # I'd rather not have anyone else calling this
+  protected
+  def unlink_gemfile
+    Gemcutter.unlink(self.to_spec)
   end
 end
