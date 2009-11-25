@@ -32,7 +32,7 @@ class Gem::Commands::YankCommand < Gem::AbstractCommand
 
     response = make_request(:post, url) do |request|
       request.add_field("Authorization", api_key)
-      request.add_field('version', version)
+      request.set_form_data({'version' => version})
     end
     
     say response.body
