@@ -17,6 +17,7 @@ ActionController::Routing::Routes.draw do |map|
                    :requirements => { :id => RUBYGEM_NAME_MATCHER }
       v1.resources :rubygems,
                    :as           => "gems",
+                   :member     => {:revert => :post},
                    :only         => [:create] do |rubygems|
 
         rubygems.resource :owners,
