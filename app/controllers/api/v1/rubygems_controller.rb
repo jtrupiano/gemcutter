@@ -1,9 +1,9 @@
 class Api::V1::RubygemsController < ApplicationController
-  skip_before_filter :verify_authenticity_token, :only => :create
+  skip_before_filter :verify_authenticity_token, :only => [:create, :yank]
 
-  before_filter :authenticate_with_api_key, :only => :create
-  before_filter :verify_authenticated_user, :only => :create
-  before_filter :find_gem,                  :only => [:show, :revert]
+  before_filter :authenticate_with_api_key, :only => [:create, :yank]
+  before_filter :verify_authenticated_user, :only => [:create, :yank]
+  before_filter :find_gem,                  :only => [:show, :yank]
 
   def show
     if @rubygem.hosted?
@@ -22,12 +22,14 @@ class Api::V1::RubygemsController < ApplicationController
     render :text => gemcutter.message, :status => gemcutter.code
   end
 
-  def revert
+  def yank
     if @rubygem.hosted?
-      if @rubygem.revert!
-        render :json => "Successfully reverted"
-      else
-        render :json => "This gem could not be reverted.", :status => :forbidden
+      begin
+        version = Version.find_from_slug!(@rubygem, params[:version])
+        version.destroy
+        render :json => "Successfully yanked"
+      rescue ActiveRecord::RecordNotFound
+        render :json => "This gem could not be yanked.", :status => :forbidden
       end
     else
       render :json => "This gem does not exist.", :status => :not_found

@@ -112,7 +112,10 @@ ActiveRecord::Schema.define(:version => 20091229014120) do
   end
 
   add_index "users", ["email"], :name => "index_users_on_email"
+<<<<<<< HEAD:db/schema.rb
   add_index "users", ["handle"], :name => "index_users_on_handle"
+=======
+>>>>>>> Change rubygem#revert to rubygem#yank:db/schema.rb
   add_index "users", ["id", "confirmation_token"], :name => "index_users_on_id_and_confirmation_token"
   add_index "users", ["id", "token"], :name => "index_users_on_id_and_token"
   add_index "users", ["remember_token"], :name => "index_users_on_remember_token"

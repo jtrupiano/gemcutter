@@ -162,5 +162,30 @@ class Api::V1::RubygemsControllerTest < ActionController::TestCase
         assert_equal "You do not have permission to push to this gem.", @response.body
       end
     end
+    
+    context "for a gem SomeGem with a single version 0.1.0" do
+      setup do
+        @rubygem  = Factory(:rubygem, :name => "SomeGem")
+        @v1       = Factory(:version, :rubygem => @rubygem, :number => "0.1.0", :platform => "ruby")
+      end
+      
+      context "ON POST to yank for existing gem version" do
+        setup do
+          post :yank, :id => @rubygem.to_param, :version => @v1.number
+        end
+      
+        should_respond_with :success
+        should_change("the rubygem's version count") { @rubygem.versions.count }
+      end
+    
+      context "ON POST to yank for existing gem with invalid version" do
+        setup do
+          post :yank, :id => @rubygem.to_param, :version => "0.2.0"
+        end
+        
+        should_respond_with :forbidden
+        should_not_change("the rubygem's version count") { @rubygem.versions.count }
+      end
+    end
   end
 end

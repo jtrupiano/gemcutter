@@ -16,20 +16,10 @@ When /^I push the gem "([^\"]*)" with my api key$/ do |name|
   visit api_v1_rubygems_path, :post, File.open(path).read
 end
 
-When /^I delete the gem "([^\"]*)" with my api key$/ do |arg1|
-  pending
-end
-
-When /^I revert the gem "([^\"]*)" with my api key$/ do |name|
+When /^I delete the gem "([^\"]*)" version "([^\"]*)" with my api key$/ do |name, version_number|
   header("HTTP_AUTHORIZATION", @api_key)
-  visit revert_api_v1_rubygem_path(name), :post
-  assert_match /Successfully reverted/, response.body
-end
-
-When /^I attempt to revert the gem "([^\"]*)" with my api key$/ do |name|
-  header("HTTP_AUTHORIZATION", @api_key)
-  visit revert_api_v1_rubygem_path(name), :post
-  assert_match /This gem could not be reverted/, response.body
+  visit yank_api_v1_rubygem_path(name, :version => version_number), :post
+  assert_match /Successfully yanked/, response.body
 end
 
 When /^I migrate the gem "([^\"]*)" with my api key$/ do |name|
