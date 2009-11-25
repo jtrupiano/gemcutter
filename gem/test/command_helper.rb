@@ -21,4 +21,13 @@ require "rubygems_plugin"
 
 class CommandTest < ActiveSupport::TestCase
   include RR::Adapters::TestUnit unless include?(RR::Adapters::TestUnit)
+  
+  private
+    def gemcutter_url
+      @command.gemcutter_url #Gem::AbstractCommand::URL
+    end
+    
+    def gemcutter_domain
+      @command.gemcutter_domain
+    end
 end
