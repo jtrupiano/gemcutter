@@ -41,6 +41,7 @@ begin
     gem push          publish your gems for the world to use and enjoy
     gem owner         allow/disallow others to push to your gems
     gem webhook       register urls to be pinged when gems are pushed
+    gem yank          remove a specific version of a gem from Gemcutter
 
 ========================================================================
 
