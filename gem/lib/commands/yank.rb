@@ -30,7 +30,7 @@ class Gem::Commands::YankCommand < Gem::AbstractCommand
     url = "gems/yank/#{name}"
     # say "posting to #{url}"
 
-    response = make_request(:post, url) do |request|
+    response = make_request(:delete, url) do |request|
       request.add_field("Authorization", api_key)
       request.set_form_data({'version' => version})
     end
