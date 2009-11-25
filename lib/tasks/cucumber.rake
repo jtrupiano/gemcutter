@@ -16,7 +16,7 @@ begin
 
     Cucumber::Rake::Task.new({:wip => 'db:test:prepare'}, 'Run features that are being worked on') do |t|
       t.fork = true # You may get faster startup if you set this to false
-      t.cucumber_opts = "--color --tags @wip:2 --wip --format #{ENV['CUCUMBER_FORMAT'] || 'progress'}"
+      t.cucumber_opts = "--color --tags @wip --format #{ENV['CUCUMBER_FORMAT'] || 'progress'}"
       t.binary = vendored_cucumber_binary
     end
 

@@ -170,4 +170,12 @@ class Rubygem < ActiveRecord::Base
     version.rubygem = self
     version
   end
+
+  def revert!
+    if self.versions_count > 1 && version = self.versions.latest
+      version.destroy
+    else
+      false
+    end
+  end
 end

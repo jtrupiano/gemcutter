@@ -20,6 +20,34 @@ When /^I delete the gem "([^\"]*)" with my api key$/ do |arg1|
   pending
 end
 
+When /^I revert the gem "([^\"]*)" with my api key$/ do |name|
+  header("HTTP_AUTHORIZATION", @api_key)
+  visit revert_api_v1_rubygem_path(name), :post
+  assert_match /Successfully reverted/, response.body
+end
+
+When /^I attempt to revert the gem "([^\"]*)" with my api key$/ do |name|
+  header("HTTP_AUTHORIZATION", @api_key)
+  visit revert_api_v1_rubygem_path(name), :post
+  assert_match /This gem could not be reverted/, response.body
+end
+
+When /^I migrate the gem "([^\"]*)" with my api key$/ do |name|
+  rubygem = Rubygem.find_by_name!(name)
+
+  header("HTTP_AUTHORIZATION", @api_key)
+  visit migrate_path(:rubygem_id => rubygem.to_param), :post
+  token = response.body
+
+  subdomain = rubygem.versions.latest.rubyforge_project
+
+  FakeWeb.register_uri(:get,
+                       "http://#{subdomain}.rubyforge.org/migrate-#{name}.html",
+                       :body => token)
+
+  visit migrate_path(:rubygem_id => rubygem.to_param), :put
+end
+
 When /^I list the owners of gem "([^\"]*)" with my api key$/ do |name|
   api_key_header
   visit api_v1_rubygem_owners_path(:rubygem_id => name), :get

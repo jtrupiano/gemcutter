@@ -21,6 +21,24 @@ module Vault
       # For the life of me, I can't figure out how to pass a stream in here from a closed StringIO
       VaultObject.store(key, final.string, OPTIONS)
     end
+
+    def self.included(base)
+      base.extend ClassMethods
+    end
+
+    module ClassMethods
+      def unlink(spec)
+        cache_path = "gems/#{spec.original_name}.gem"
+        if VaultObject.exists?(cache_path)
+          VaultObject.delete(cache_path)
+        end
+
+        quick_path = "quick/Marshal.4.8/#{spec.original_name}.gemspec.rz"
+        if VaultObject.exists?(quick_path)
+          VaultObject.delete(quick_path)
+        end
+      end
+    end
   end
 
   module FS
@@ -50,6 +68,24 @@ module Vault
 
       File.open(Gemcutter.server_path(key), "wb") do |f|
         f.write final.string
+      end
+    end
+
+    def self.included(base)
+      base.extend ClassMethods
+    end
+
+    module ClassMethods
+      def unlink(spec)
+        cache_path = Gemcutter.server_path('gems', "#{spec.original_name}.gem")
+        if File.exists?(cache_path)
+          File.unlink(cache_path)
+        end
+
+        quick_path = Gemcutter.server_path("quick", "Marshal.4.8", "#{spec.original_name}.gemspec.rz")
+        if File.exists?(quick_path)
+          File.unlink(quick_path)
+        end
       end
     end
   end
