@@ -25,6 +25,15 @@ class CommandTest < ActiveSupport::TestCase
   def teardown
     reset_webmock
   end
+  
+  private
+    def gemcutter_url
+      @command.gemcutter_url #Gem::AbstractCommand::URL
+    end
+    
+    def gemcutter_domain
+      @command.gemcutter_domain
+    end
 end
 
 def stub_config(config)

@@ -22,7 +22,7 @@ class YankCommandTest < CommandTest
     
     should "cowardly refuse to yank a gem without a version" do
       @response = "Unable to yank gem"
-      FakeWeb.register_uri :delete, "#{server_host}/gems/yank/MyGem", :body => @response
+      FakeWeb.register_uri :delete, "#{gemcutter_url}/gems/yank/MyGem", :body => @response
       mock(@command).say(@response)
       @command.invoke("MyGem")
     end
@@ -30,7 +30,7 @@ class YankCommandTest < CommandTest
     should "yank a gem" do
       mock(@command).say("Yanking gem from Gemcutter...")
       @response = "Successfully yanked"
-      FakeWeb.register_uri :delete, "#{server_host}/gems/yank/MyGem", :body => @response
+      FakeWeb.register_uri :delete, "#{gemcutter_url}/gems/yank/MyGem", :body => @response
     
       @gem = "MyGem"
       @config = { :gemcutter_key => "key" }
@@ -46,9 +46,5 @@ class YankCommandTest < CommandTest
   private
     def version_requirement
       Gem::Requirement.new(Gem::Version.new("0.1.0"))
-    end
-    
-    def server_host
-      @command.gemcutter_url #Gem::AbstractCommand::URL
     end
 end

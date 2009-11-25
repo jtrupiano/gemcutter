@@ -5,8 +5,22 @@ class Gem::AbstractCommand < Gem::Command
   include Gem::LocalRemoteOptions
   include Gem::VersionOption
 
+  URL = "http://gemcutter.org"
+
+  def api_key
+    Gem.configuration[:gemcutter_key]
+  end
+
+  def gemcutter_protocol
+    'https://'
+  end
+  
+  def gemcutter_domain
+    'gemcutter.org'
+  end
+  
   def gemcutter_url
-    ENV['GEMCUTTER_URL'] || 'https://gemcutter.org'
+    ENV['GEMCUTTER_URL'] || "#{gemcutter_protocol}#{gemcutter_domain}"
   end
 
   def setup
