@@ -5,7 +5,7 @@ class YankCommandTest < CommandTest
     setup do
       @command = Gem::Commands::YankCommand.new
       stub(@command).say
-      FakeWeb.register_uri :post, "https://gemcutter.heroku.com/gems/yank/SomeGem", :body => "Successfully yanked"
+      FakeWeb.register_uri :delete, "https://gemcutter.heroku.com/gems/yank/SomeGem", :body => "Successfully yanked"
     end
 
     should "setup and yank the gem" do
@@ -22,7 +22,7 @@ class YankCommandTest < CommandTest
     
     should "cowardly refuse to yank a gem without a version" do
       @response = "Unable to yank gem"
-      FakeWeb.register_uri :post, "#{server_host}/gems/yank/MyGem", :body => @response
+      FakeWeb.register_uri :delete, "#{server_host}/gems/yank/MyGem", :body => @response
       mock(@command).say(@response)
       @command.invoke("MyGem")
     end
@@ -30,7 +30,7 @@ class YankCommandTest < CommandTest
     should "yank a gem" do
       mock(@command).say("Yanking gem from Gemcutter...")
       @response = "Successfully yanked"
-      FakeWeb.register_uri :post, "#{server_host}/gems/yank/MyGem", :body => @response
+      FakeWeb.register_uri :delete, "#{server_host}/gems/yank/MyGem", :body => @response
     
       @gem = "MyGem"
       @config = { :gemcutter_key => "key" }
