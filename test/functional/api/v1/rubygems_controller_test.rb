@@ -175,7 +175,8 @@ class Api::V1::RubygemsControllerTest < ActionController::TestCase
         end
       
         should_respond_with :success
-        should_change("the rubygem's version count") { @rubygem.versions.count }
+        should_not_change("the rubygem's version count")     { @rubygem.versions.count }
+        should_change("the rubygem's indexed version count") { @rubygem.versions.indexed.count }
       end
     
       context "ON DELETE to yank for existing gem with invalid version" do
@@ -184,7 +185,8 @@ class Api::V1::RubygemsControllerTest < ActionController::TestCase
         end
         
         should_respond_with :forbidden
-        should_not_change("the rubygem's version count") { @rubygem.versions.count }
+        should_not_change("the rubygem's version count")         { @rubygem.versions.count }
+        should_not_change("the rubygem's indexed version count") { @rubygem.versions.indexed.count }
       end
     end
   end
