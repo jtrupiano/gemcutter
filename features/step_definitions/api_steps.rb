@@ -18,8 +18,7 @@ end
 
 When /^I delete the gem "([^\"]*)" version "([^\"]*)" with my api key$/ do |name, version_number|
   header("HTTP_AUTHORIZATION", @api_key)
-  visit yank_api_v1_rubygem_path(name, :version => version_number), :post
-  assert_match /Successfully yanked/, response.body
+  visit yank_api_v1_rubygem_path(name, :version => version_number), :delete
 end
 
 When /^I migrate the gem "([^\"]*)" with my api key$/ do |name|
