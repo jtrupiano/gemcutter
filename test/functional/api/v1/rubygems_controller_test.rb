@@ -145,7 +145,7 @@ class Api::V1::RubygemsControllerTest < ActionController::TestCase
       end
     end
     
-    context "for a gem SomeGem with a single version 0.1.0" do
+    context "for a gem SomeGem with a version 0.1.0" do
       setup do
         @rubygem  = Factory(:rubygem, :name => "SomeGem")
         @v1       = Factory(:version, :rubygem => @rubygem, :number => "0.1.0", :platform => "ruby")
@@ -159,6 +159,24 @@ class Api::V1::RubygemsControllerTest < ActionController::TestCase
         should_respond_with :success
         should_not_change("the rubygem's version count")     { @rubygem.versions.count }
         should_change("the rubygem's indexed version count") { @rubygem.versions.indexed.count }
+        should_change("the ownership count")                 { Ownership.count }
+      end
+      
+      context "and a version 0.1.1" do
+        setup do
+          @v2 = Factory(:version, :rubygem => @rubygem, :number => "0.1.1", :platform => "ruby")
+        end
+        
+        context "ON DELETE to yank for version 0.1.1" do
+          setup do
+            delete :yank, :id => @rubygem.to_param, :version => @v1.number          
+          end
+          
+          should_respond_with :success
+          should_not_change("the rubygem's version count")     { @rubygem.versions.count }
+          should_change("the rubygem's indexed version count") { @rubygem.versions.indexed.count }
+          should_not_change("the ownership count")             { Ownership.count }
+        end
       end
     
       context "ON DELETE to yank for existing gem with invalid version" do
