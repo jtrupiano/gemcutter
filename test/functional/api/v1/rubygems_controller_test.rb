@@ -149,6 +149,8 @@ class Api::V1::RubygemsControllerTest < ActionController::TestCase
       setup do
         @rubygem  = Factory(:rubygem, :name => "SomeGem")
         @v1       = Factory(:version, :rubygem => @rubygem, :number => "0.1.0", :platform => "ruby")
+        @owner    = Factory(:user)
+        Factory(:ownership, :user => @owner, :rubygem => @rubygem)
       end
       
       context "ON DELETE to yank for existing gem version" do

@@ -6,6 +6,7 @@ Factory.define :version do |version|
   version.platform          { "ruby" }
   version.rubyforge_project { 'awesome' }
   version.association       :rubygem
+  version.indexed           true
 end
 
 Factory.sequence :version_number do |n|

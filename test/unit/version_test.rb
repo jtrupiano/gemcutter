@@ -151,6 +151,11 @@ class VersionTest < ActiveSupport::TestCase
       assert_equal @dep_one.requirements.split(", "), @spec_dep_one.requirements_list
       assert_equal @dep_two.requirements.split(", "), @spec_dep_two.requirements_list
     end
+    
+    should "unindex when yanked" do
+      @version.yank!
+      assert !@version.indexed?
+    end
   end
 
   context "when indexing" do

@@ -74,6 +74,10 @@ class Version < ActiveRecord::Base
   def reorder_versions
     rubygem.reorder_versions
   end
+  
+  def yank!
+    update_attribute(:indexed, false)
+  end
 
   def info
     [ description, summary, "This rubygem does not have a description or summary." ].detect(&:present?)
