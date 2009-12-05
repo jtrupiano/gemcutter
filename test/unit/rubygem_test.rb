@@ -277,6 +277,10 @@ class RubygemTest < ActiveSupport::TestCase
 
       Factory(:version, :rubygem => @rubygem_with_version)
       3.times { Factory(:version, :rubygem => @rubygem_with_versions) }
+      
+      @owner = Factory(:user)
+      Factory(:ownership, :rubygem => @rubygem_with_version, :user => @owner, :approved => true)
+      Factory(:ownership, :rubygem => @rubygem_with_versions, :user => @owner, :approved => true)
     end
 
     should "return only gems with one version" do
@@ -294,6 +298,48 @@ class RubygemTest < ActiveSupport::TestCase
     should "be hosted or not" do
       assert ! @rubygem_without_version.hosted?
       assert @rubygem_with_version.hosted?
+    end
+
+    should "return a nil rubyforge project without any versions" do
+      assert_nil @rubygem_without_version.rubyforge_project
+    end
+
+    should "return the current rubyforge project with a version" do
+      assert_equal @rubygem_with_version.versions.latest.rubyforge_project,
+                   @rubygem_with_version.rubyforge_project
+    end
+    
+    context "when yanking the last version of a gem with an owner" do
+      setup do
+        @rubygem_with_version.yank!(@rubygem_with_version.versions.first)
+      end
+      should "no longer be owned" do
+        assert @rubygem_with_version.unowned?
+      end
+      should_change("ownership count") { Ownership.count }
+    end
+    
+    context "when yanking one of many versions of a gem" do
+      setup do
+        @rubygem_with_versions.yank!(@rubygem_with_versions.versions.first)
+      end
+      should "remain owned" do
+        assert !@rubygem_with_versions.unowned?
+      end
+      should_not_change("ownership count") { Ownership.count }
+    end
+  end
+
+  context "with a rubygem that has a version with a nil rubyforge_project" do
+    setup do
+      @rubygem = Factory(:rubygem)
+      @rubyforge_project = 'test_project'
+      Factory(:version, :rubygem => @rubygem, :rubyforge_project => nil)
+      Factory(:version, :rubygem => @rubygem, :rubyforge_project => @rubyforge_project)
+    end
+
+    should "return the first non-nil rubyforge_project" do
+      assert_equal @rubyforge_project, @rubygem.rubyforge_project
     end
   end
 
@@ -496,4 +542,5 @@ class RubygemTest < ActiveSupport::TestCase
       should_change("total number of Dependencies", :by => 2) { Dependency.count }
     end
   end
+  
 end

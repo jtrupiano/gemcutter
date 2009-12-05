@@ -26,7 +26,7 @@ class Api::V1::RubygemsController < ApplicationController
     if @rubygem.hosted?
       begin
         version = Version.find_from_slug!(@rubygem, params[:version])
-        version.destroy
+        @rubygem.yank!(version)
         render :json => "Successfully yanked"
       rescue ActiveRecord::RecordNotFound
         render :json => "This gem could not be yanked.", :status => :forbidden
