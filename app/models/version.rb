@@ -14,7 +14,8 @@ class Version < ActiveRecord::Base
   }
 
   named_scope :subscribed_to_by, lambda { |user|
-    { :conditions => { :rubygem_id => user.subscribed_gem_ids } }
+    { :conditions => { :rubygem_id => user.subscribed_gem_ids },
+      :order => 'built_at desc' }
   }
 
   named_scope :with_associated, { :conditions => ["rubygems.versions_count > 1"],
@@ -147,7 +148,8 @@ class Version < ActiveRecord::Base
 
   def to_install
     command = "gem install #{rubygem.name}"
-    command << " -v #{number}" if rubygem.versions.latest != self
+    latest = prerelease ? rubygem.versions.prerelease.first : rubygem.versions.latest
+    command << " -v #{number}" if latest != self
     command << " --pre" if prerelease
     command
   end
