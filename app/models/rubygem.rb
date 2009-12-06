@@ -157,7 +157,7 @@ class Rubygem < ActiveRecord::Base
 
       self.versions.update_all(:latest => false)
 
-      if first_release = versions.release.first
+      if first_release = versions.indexed.release.first
         versions.find_all_by_number(first_release.number).each do |version|
           version.update_attributes(:latest => true)
         end

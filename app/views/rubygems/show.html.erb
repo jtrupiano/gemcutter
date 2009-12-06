@@ -13,10 +13,16 @@
   </div>
 
   <div class="border">
-    <%= clippy(@latest_version.to_install) %>
-    <div class="install">
-      <div class="instructions"><strong>install</strong><span><%= @latest_version.to_install %></span></div>
-    </div>
+    <% if !@latest_version.yanked? -%>
+      <%= clippy(@latest_version.to_install) %>
+      <div class="install">
+        <div class="instructions"><strong>install</strong><span><%= @latest_version.to_install %></span></div>
+      </div>
+    <% else -%>
+      <div class="install">
+        This gem has been yanked.
+      </div>
+    <% end -%>
   </div>
 
   <div class="border">

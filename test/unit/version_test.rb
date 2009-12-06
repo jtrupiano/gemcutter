@@ -169,9 +169,13 @@ class VersionTest < ActiveSupport::TestCase
       assert_equal @dep_two.requirements.split(", "), @spec_dep_two.requirements_list
     end
     
-    should "unindex when yanked" do
-      @version.yank!
-      assert !@version.indexed?
+    context "when yanked" do
+      setup do
+        @version.yank!
+        @version.reload
+      end
+      should("unindex") { assert !@version.indexed? }
+      should("no longer be latest") { assert !@version.latest?}
     end
   end
 
