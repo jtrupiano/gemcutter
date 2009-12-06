@@ -78,6 +78,13 @@ class RubygemTest < ActiveSupport::TestCase
       assert_equal 1,           @rubygem.reload.versions_count
       assert_equal version1pre, @rubygem.reload.versions.latest
     end
+    
+    should "return the latest indexed version when a more recent yanked version exists" do
+      indexed_v1 = Factory(:version, :rubygem => @rubygem, :number => "0.1.0", :indexed => true)
+      yanked_v2  = Factory(:version, :rubygem => @rubygem, :number => "0.1.1", :indexed => false)
+      
+      assert_equal indexed_v1, @rubygem.reload.versions.latest
+    end
   end
 
   context "with a rubygem" do
