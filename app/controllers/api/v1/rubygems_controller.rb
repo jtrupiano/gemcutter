@@ -34,7 +34,7 @@ class Api::V1::RubygemsController < ApplicationController
           @rubygem.yank!(version)
           render :json => "Successfully yanked"
         else
-          render :json => "The version #{params[:version]} has already been yanked."
+          render :json => "The version #{params[:version]} has already been yanked.", :status => :unprocessable_entity
         end
       rescue ActiveRecord::RecordNotFound
         render :json => "The version #{params[:version]} does not exist.", :status => :not_found
