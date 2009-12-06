@@ -114,7 +114,7 @@ class Rubygem < ActiveRecord::Base
   end
 
   def pushable?
-    new_record? || versions_count.zero?
+    new_record? || versions.indexed.count.zero?
   end
 
   def create_ownership(user)
