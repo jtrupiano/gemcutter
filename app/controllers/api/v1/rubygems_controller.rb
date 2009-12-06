@@ -20,16 +20,22 @@ class Api::V1::RubygemsController < ApplicationController
   end
 
   def yank
-    if @rubygem.hosted?
+    if !@rubygem.hosted?
+      render :json => "This gem does not exist.", :status => :not_found
+    elsif !@rubygem.owned_by?(current_user)
+      render :json => "You do not have permission to yank this gem.", :status => :forbidden
+    else
       begin
         version = Version.find_from_slug!(@rubygem, params[:version])
-        @rubygem.yank!(version)
-        render :json => "Successfully yanked"
+        if version.indexed?
+          @rubygem.yank!(version)
+          render :json => "Successfully yanked"
+        else
+          render :json => "The version #{params[:version]} has already been yanked."
+        end
       rescue ActiveRecord::RecordNotFound
-        render :json => "This gem could not be yanked.", :status => :forbidden
+        render :json => "The version #{params[:version]} does not exist.", :status => :not_found
       end
-    else
-      render :json => "This gem does not exist.", :status => :not_found
     end
   end
 end

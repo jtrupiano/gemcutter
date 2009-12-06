@@ -6,14 +6,16 @@ Feature: Delete Gems
 @wip
   Scenario: User deletes a gem
     Given I am signed up and confirmed as "email@person.com/password"
-    And I Have a gem "RGem" with version "1.2.2"
+    And I have a gem "RGem" with version "1.2.2"
     And I have a gem "RGem" with version "1.2.3"
     And I have an api key for "email@person.com/password"
     And I've already pushed the gem "RGem-1.2.2.gem" with my api key
+    And the gem "RGem" with version "1.2.2" has been indexed
     And I've already pushed the gem "RGem-1.2.3.gem" with my api key
+    And the gem "RGem" with version "1.2.3" has been indexed
     When I delete the gem "RGem" version "1.2.3" with my api key
-    And I go to my gems page
-    Then I should not see "RGem"
+    And I go to the dashboard with my api key
+    Then I should see "RGem"
     And I visit the gem page for "RGem"
     Then I should not see "1.2.3"
 
@@ -22,8 +24,9 @@ Feature: Delete Gems
     And I have a gem "RGem" with version "1.2.3"
     And I have an api key for "old@owner.com/password"
     And I've already pushed the gem "RGem-1.2.3.gem" with my api key
+    And the gem "RGem" with version "1.2.3" has been indexed
     When I delete the gem "RGem" version "1.2.3" with my api key
-    And I go to my gems page
+    And I go to the dashboard with my api key
     Then I should not see "RGem"
     And I visit the gem page for "RGem"
     Then I should not see "1.2.3"
@@ -46,6 +49,28 @@ Feature: Delete Gems
     And a rubygem exists with a name of "RGem"
     And a version exists for the "RGem" rubygem with a number of "1.2.3"
     And the "RGem" rubygem is owned by "the@owner.org"
-    When I delete the gem "RGem" version "1.2.3" with my api key
+    And the gem "RGem" with version "1.2.3" has been indexed
+    When I attempt to delete the gem "RGem" version "1.2.3" with my api key
     Then I should see "You do not have permission to yank this gem."
     
+  Scenario: User attempts to delete a nonexistent version of a gem
+    Given I am signed up and confirmed as "the@owner.com/password"
+    And I have a gem "RGem" with version "1.2.3"
+    And I have an api key for "the@owner.com/password"
+    And I've already pushed the gem "RGem-1.2.3.gem" with my api key
+    And the gem "RGem" with version "1.2.3" has been indexed
+    When I attempt to delete the gem "RGem" version "1.2.4" with my api key
+    Then I should see "The version 1.2.4 does not exist."
+  
+  Scenario: User attempts to delete a gem that has already been deleted
+    Given I am signed up and confirmed as "the@owner.com/password"
+    And I have a gem "RGem" with version "1.2.2"
+    And I have a gem "RGem" with version "1.2.3"
+    And I have an api key for "the@owner.com/password"
+    And I've already pushed the gem "RGem-1.2.2.gem" with my api key
+    And the gem "RGem" with version "1.2.2" has been indexed
+    And I've already pushed the gem "RGem-1.2.3.gem" with my api key
+    And the gem "RGem" with version "1.2.3" has been indexed
+    And I have have already deleted the gem "RGem" with version "1.2.3" with my api key
+    When I attempt to delete the gem "RGem" version "1.2.3" with my api key
+    Then I should see "The version 1.2.3 has already been yanked"

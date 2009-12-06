@@ -15,6 +15,16 @@ Given /^a rubygem exists with name "([^\"]*)" and rubyforge project "([^\"]*)"$/
   Factory(:version, :rubygem => rubygem, :rubyforge_project => rubyforge_project)
 end
 
+Given /^the gem "([^\"]*)" with version "([^\"]*)" has been indexed$/ do |name, version|
+  rubygem = Rubygem.find_by_name!(name)
+  rubygem.versions.find_by_number(version).update_attribute(:indexed, true)
+end
+
+Given /^I have have already deleted the gem "([^\"]*)" with version "([^\"]*)" with my api key$/ do |name, version|
+  rubygem = Rubygem.find_by_name!(name)
+  rubygem.versions.find_by_number(version).yank!
+end
+
 def build_gem(name, version, summary = "Gemcutter", platform = "ruby")
   builder = Gem::Builder.new(build_gemspec(name, version, summary, platform))
   builder.ui = Gem::SilentUI.new
