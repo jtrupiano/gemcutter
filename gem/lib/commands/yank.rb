@@ -19,16 +19,20 @@ class Gem::Commands::YankCommand < Gem::AbstractCommand
 
   def execute
     setup
-    # raise options.inspect
-    yank_gem(options[:version])
+    version = get_version_from_requirements(options[:version])
+    if !version.nil?
+      yank_gem(version)
+    else
+      say "A version argument is required: #{usage}"
+    end
   end
 
   def yank_gem(version)
     say "Yanking gem from Gemcutter..."
 
     name = get_one_gem_name
-    url = "gems/yank/#{name}"
-    # say "posting to #{url}"
+    url = "gems/#{name}/yank"
+    # say "posting to #{url} w/ version '#{version}'"
 
     response = make_request(:delete, url) do |request|
       request.add_field("Authorization", api_key)
@@ -38,4 +42,12 @@ class Gem::Commands::YankCommand < Gem::AbstractCommand
     say response.body
   end
 
+  private
+    def get_version_from_requirements(requirements)
+      begin
+        requirements.requirements.first[1].version
+      rescue
+        nil
+      end
+    end
 end

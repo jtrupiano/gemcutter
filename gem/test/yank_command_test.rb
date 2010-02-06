@@ -5,39 +5,31 @@ class YankCommandTest < CommandTest
     setup do
       @command = Gem::Commands::YankCommand.new
       stub(@command).say
+      stub_config({ :rubygems_api_key => "key" })
     end
 
     should "setup and yank the gem" do
       mock(@command).setup
-      mock(@command).yank_gem(version_requirement)
-      @command.invoke("SomeGem", "-v0.1.0")
+      mock(@command).get_version_from_requirements(version_requirement).returns("0.1.0")
+      mock(@command).yank_gem("0.1.0")
+      @command.invoke("SomeGem", "--version", "0.1.0")
+      assert_received(@command) { |command| command.setup }
+      assert_received(@command) { |command| command.get_version_from_requirements(version_requirement) }
+      assert_received(@command) { |command| command.yank_gem("0.1.0") }
     end
     
-    should "raise an error with no arguments" do
-      assert_raise Gem::CommandLineError do
-        @command.invoke
-      end
-    end
-    
-    should "cowardly refuse to yank a gem without a version" do
-      url = "#{gemcutter_url}/api/v1/gems/yank/MyGem"
-
-      mock(@command).say
-      stub_config({ :rubygems_api_key => "key" })
-      stub(@command).options { {:args => ["MyGem"]} }
-      stub_request(:delete, url).to_return(:body => "Unable to yank gem")
-      @command.invoke("MyGem")
-      
-      assert_received(@command) { |command| command.say("Yanking gem from Gemcutter...") }
-      assert_received(@command) { |command| command.say("Unable to yank gem") }
+    should "not yank a gem because of a missing version" do
+      mock(@command).setup
+      mock(@command).yank_gem.returns { raise Exception.new("should not call #yank_gem") }
+      @command.invoke("SomeGem")
+      assert_received(@command) { |command| command.setup }
     end
     
     should "yank a gem" do
-      url = "#{gemcutter_url}/api/v1/gems/yank/MyGem"
+      url = "https://gemcutter.org/api/v1/gems/MyGem/yank"
       
       mock(@command).say("Yanking gem from Gemcutter...")
       stub(@command).options { {:args => ["MyGem"], :version => version_requirement} }
-      stub_config({ :rubygems_api_key => "key" })
       stub_request(:delete, url).to_return(:body => "Successfully yanked")
     
       @command.yank_gem(version_requirement)
