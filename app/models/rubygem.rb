@@ -33,9 +33,10 @@ class Rubygem < ActiveRecord::Base
   }
 
   named_scope :search, lambda { |query| {
-    :conditions => ["(upper(name) like upper(:query) or upper(versions.description) like upper(:query)) and versions_count > 0",
+    :conditions => ["(upper(name) like upper(:query) or upper(versions.description) like upper(:query))",
       {:query => "%#{query.strip}%"}],
     :include    => [:versions],
+    :having     => 'count(versions.id) > 0',
     :order      => "rubygems.downloads desc" }
   }
 
@@ -184,13 +185,5 @@ class Rubygem < ActiveRecord::Base
     version = self.versions.find_or_initialize_by_number_and_platform(spec.version.to_s, spec.original_platform.to_s)
     version.rubygem = self
     version
-  end
-
-  def revert!
-    if self.versions_count > 1 && version = self.versions.latest
-      version.destroy
-    else
-      false
-    end
   end
 end

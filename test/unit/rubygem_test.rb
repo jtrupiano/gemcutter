@@ -302,15 +302,6 @@ class RubygemTest < ActiveSupport::TestCase
       assert ! @rubygem_without_version.hosted?
       assert @rubygem_with_version.hosted?
     end
-
-    should "return a nil rubyforge project without any versions" do
-      assert_nil @rubygem_without_version.rubyforge_project
-    end
-
-    should "return the current rubyforge project with a version" do
-      assert_equal @rubygem_with_version.versions.latest.rubyforge_project,
-                   @rubygem_with_version.rubyforge_project
-    end
     
     context "when yanking the last version of a gem with an owner" do
       setup do
@@ -330,19 +321,6 @@ class RubygemTest < ActiveSupport::TestCase
         assert !@rubygem_with_versions.unowned?
       end
       should_not_change("ownership count") { Ownership.count }
-    end
-  end
-
-  context "with a rubygem that has a version with a nil rubyforge_project" do
-    setup do
-      @rubygem = Factory(:rubygem)
-      @rubyforge_project = 'test_project'
-      Factory(:version, :rubygem => @rubygem, :rubyforge_project => nil)
-      Factory(:version, :rubygem => @rubygem, :rubyforge_project => @rubyforge_project)
-    end
-
-    should "return the first non-nil rubyforge_project" do
-      assert_equal @rubyforge_project, @rubygem.rubyforge_project
     end
   end
 
