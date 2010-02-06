@@ -102,7 +102,7 @@ Then /^I should not see "([^\"]*)"$/ do |text|
 end
 
 Then /^I should see the version "([^\"]*)" featured$/ do |version_number|
-  assert have_tag "<h3>", :content => version_number
+  assert have_tag("<h3>", :content => version_number)
 end
 
 Then /^the "([^\"]*)" field should contain "([^\"]*)"$/ do |field, value|
