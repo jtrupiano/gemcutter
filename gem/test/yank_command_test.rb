@@ -5,7 +5,7 @@ class YankCommandTest < CommandTest
     setup do
       @command = Gem::Commands::YankCommand.new
       stub(@command).say
-      stub_config({ :rubygems_api_key => "key" })
+      stub_api_key(@command)
     end
 
     should "setup and yank the gem" do

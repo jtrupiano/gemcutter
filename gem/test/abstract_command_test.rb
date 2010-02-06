@@ -84,7 +84,8 @@ class AbstractCommandTest < CommandTest
         stub(@command).say
         stub(@command).ask { @email }
         stub(@command).ask_for_password { @password }
-        stub_config(:rubygems_api_key => @key)
+        mock(@command).api_key=(@key) # to prevent overwriting ~/.gem/credentials
+        stub_api_key(@command)
       end
 
       context "on a good request" do

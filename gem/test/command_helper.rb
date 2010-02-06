@@ -33,6 +33,10 @@ def stub_config(config)
   stub(Gem).configuration { file }
 end
 
+def stub_api_key(command, key='key')
+  stub(command).api_key { key }
+end
+
 def assert_said(command, what)
   assert_received(command) do |command|
     command.say(what)
