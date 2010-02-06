@@ -38,7 +38,8 @@ Feature: Delete Gems
     And I visit the gem page for "RGem"
     Then I should see "RGem"
     And I should see "0.1.0"
-    And I should see "new@owner.com"
+    When I list the owners of gem "RGem" with my api key
+    Then I should see "new@owner.com"
     And I should not see "old@owner.com"
     
   Scenario: User who is not owner attempts to delete a gem
