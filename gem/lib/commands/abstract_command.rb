@@ -5,12 +5,6 @@ class Gem::AbstractCommand < Gem::Command
   include Gem::LocalRemoteOptions
   include Gem::VersionOption
 
-  URL = "http://gemcutter.org"
-
-  def api_key
-    Gem.configuration[:gemcutter_key]
-  end
-
   def gemcutter_protocol
     'https://'
   end
