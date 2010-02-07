@@ -5,6 +5,7 @@ class PushCommandTest < CommandTest
     setup do
       @command = Gem::Commands::PushCommand.new
       stub(@command).say
+      stub_api_key(@command)
     end
 
     should "setup and send the gem" do
@@ -30,7 +31,6 @@ class PushCommandTest < CommandTest
         stub(@command).say
         stub(@command).options { {:args => [@gem_path]} }
         stub(Gem).read_binary(@gem_path) { @gem_binary }
-        stub_config({ :rubygems_api_key => "key" })
         stub_request(:post, @url).to_return(:body => "Success!")
 
         @command.send_gem
