@@ -26,7 +26,7 @@ class Gem::Commands::YankCommand < Gem::Command
 
   def execute
     sign_in
-    version = options[:version]
+    version = get_version_from_requirements(options[:version])
     if !version.nil?
       yank_gem(version)
     else
@@ -39,13 +39,22 @@ class Gem::Commands::YankCommand < Gem::Command
     say "Yanking gem from RubyGems.org..."
 
     name = get_one_gem_name
-    url = "api/v1/gems/#{name}/yank"
+    url = "api/v1/gems/yank"
 
     response = rubygems_api_request(:delete, url) do |request|
       request.add_field("Authorization", Gem.configuration.rubygems_api_key)
-      request.set_form_data({'version' => version})
+      request.set_form_data({'gem_name' => name, 'version' => version})
     end
 
     say response.body
   end
+  
+  private
+    def get_version_from_requirements(requirements)
+      begin
+        requirements.requirements.first[1].version
+      rescue
+        nil
+      end
+    end
 end
