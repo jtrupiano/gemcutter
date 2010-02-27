@@ -32,4 +32,5 @@ group :test do
   gem "treetop",      "1.4.3"
   gem "webrat",       "0.5.3"
   gem "webmock",      "0.7.3"
+  gem "ruby-debug",   "0.10.3"
 end

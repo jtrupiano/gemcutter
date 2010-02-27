@@ -1,5 +1,6 @@
 When /^I visit the gem page for "([^\"]*)"$/ do |gem_name|
   rubygem = Rubygem.find_by_name!(gem_name)
+  breakpoint
   visit rubygem_path(rubygem)
 end
 
